@@ -1,0 +1,32 @@
+.speedDial {
+    position: fixed !important;
+    right: 3vmax !important;
+    top: 30% !important; /* Center vertically */
+    transform: translateY(-50%) !important; /* Center vertically */
+    z-index: 9999 !important;
+    bottom: 50%; /* Increased z-index to ensure it stays on top */
+}
+
+.speedDialIcon {
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 480px) {
+    .speedDial {
+        right: 1vmax !important;
+        top: auto !important; /* Override the top positioning */
+        bottom: 55% !important; /* Fixed distance from bottom */
+        transform: none !important; /* Remove vertical centering */
+        touch-action: auto !important;
+    }
+
+
+    .speedDialIcon {
+        width: 45px !important; /* Slightly smaller for mobile */
+        height: 45px !important;
+    }
+}

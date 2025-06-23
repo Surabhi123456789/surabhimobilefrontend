@@ -1,0 +1,552 @@
+/* .dashboard {
+    width: 100vw;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    position: absolute;
+  }
+  
+  .dashboardContainer {
+    border-left: 1px solid rgba(0, 0, 0, 0.13);
+    background-color: rgb(255, 255, 255);
+    padding: 0 0;
+  }
+  
+  .dashboardContainer > h1 {
+    color: rgba(0, 0, 0, 0.733);
+    font: 300 2rem "Roboto";
+    text-align: center;
+    width: 50%;
+    padding: 1.5rem;
+    margin: auto;
+  }
+  
+  .dashboardSummary {
+    margin: 2rem 0;
+  }
+  
+  .dashboardSummary > div {
+    display: flex;
+    background-color: white;
+    justify-content: center;
+  }
+  .dashboardSummary > div > p {
+    background-color: rgba(70, 117, 218, 0.932);
+    color: white;
+    font: 300 1.3rem "Roboto";
+    text-align: center;
+    padding: 1.5rem;
+    width: 100%;
+    margin: 0 2rem;
+  }
+  .dashboardSummaryBox2 > a {
+    color: rgb(0, 0, 0);
+    font: 300 2rem "Roboto";
+    text-align: center;
+    background-color: rgb(255, 233, 174);
+    text-decoration: none;
+    padding: 1.5rem;
+    width: 10vmax;
+    height: 10vmax;
+    margin: 2rem;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .dashboardSummaryBox2 > a:first-child {
+    background-color: rgb(255, 110, 110);
+    color: rgb(255, 255, 255);
+  }
+  
+  .dashboardSummaryBox2 > a:last-child {
+    background-color: rgb(51, 51, 51);
+    color: rgb(255, 255, 255);
+  }
+  
+  .lineChart {
+    width: 80%;
+    margin: auto;
+  }
+  
+  .doughnutChart {
+    width: 30vmax;
+    margin: auto;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+  
+    .dashboardContainer {
+      border-left: none;
+    }
+  
+    .dashboardSummary > div > p {
+      margin: 0;
+    }
+  
+    .dashboardSummaryBox2 > a {
+      padding: 0.5rem;
+      margin: 1rem;
+      font: 300 0.9rem "Roboto";
+    }
+  } */
+
+  /* Enhanced Dashboard Styles */
+/* Enhanced Dashboard Styles */
+.dashboard {
+  width: 100vw;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  position: absolute;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.dashboardContainer {
+  background: #ffffff;
+  padding: 0;
+  overflow-y: auto;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.05);
+  border-radius: 24px 0 0 0;
+  margin-top: 20px;
+}
+
+/* Header Styles */
+.dashboardHeader {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 3rem 2rem 2rem;
+  border-radius: 24px 0 0 0;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboardHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>') no-repeat bottom;
+  background-size: cover;
+}
+
+.dashboardTitle {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  color: white !important;
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.dashboardSubtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0.5rem 0 0 0;
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  color: white !important;
+}
+
+/* Summary Cards */
+.dashboardSummary {
+  margin: 0 2rem 3rem;
+}
+
+.totalAmountCard {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.totalAmountCard::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cardIcon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.cardIcon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.totalAmountIcon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.cardContent h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  opacity: 0.9;
+}
+
+.amount {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 0.5rem 0 !important;
+  color: white !important;
+}
+
+.growth {
+  font-size: 0.9rem;
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Stats Cards */
+.dashboardSummaryBox2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.statsCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.statsCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.statsCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #e2e8f0;
+}
+
+.statsCard:hover::before {
+  opacity: 1;
+}
+
+.productsCard .cardIcon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.ordersCard .cardIcon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.usersCard .cardIcon {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+}
+
+.statsCard .cardContent h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #64748b;
+}
+
+.number {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 0.25rem 0 !important;
+  color: #1e293b !important;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Charts Container */
+.chartsContainer {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin: 0 2rem 2rem;
+}
+
+.chartCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+}
+
+.chartHeader {
+  margin-bottom: 2rem;
+}
+
+.chartHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: #1e293b;
+}
+
+.chartHeader p {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.lineChart {
+  width: 100%;
+  height: 300px;
+}
+
+.doughnutChart {
+  width: 100%;
+  height: 250px;
+  margin-bottom: 1.5rem;
+}
+
+.stockStats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stockStat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.stockIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.stockIndicator.outOfStock {
+  background: #ef4444;
+}
+
+.stockIndicator.inStock {
+  background: #10b981;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+  .chartsContainer {
+    grid-template-columns: 1fr;
+  }
+  
+  .doughnutChart {
+    height: 200px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+
+  .dashboardContainer {
+    border-radius: 0;
+    margin-top: 0;
+  }
+
+  .dashboardHeader {
+    border-radius: 0;
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .dashboardTitle {
+    font-size: 2rem !important;
+  }
+
+  .dashboardSummary {
+    margin: 0 1rem 2rem;
+  }
+
+  .totalAmountCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .dashboardSummaryBox2 {
+    grid-template-columns: 1fr;
+  }
+
+  .statsCard {
+    padding: 1.5rem;
+  }
+
+  .chartsContainer {
+    margin: 0 1rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .chartCard {
+    padding: 1.5rem;
+  }
+
+  .lineChart {
+    height: 250px;
+  }
+
+  .doughnutChart {
+    height: 200px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .dashboardHeader {
+    padding: 1.5rem 1rem;
+  }
+
+  .dashboardTitle {
+    font-size: 1.75rem !important;
+  }
+
+  .totalAmountCard {
+    padding: 1.5rem;
+  }
+
+  .amount {
+    font-size: 2rem !important;
+  }
+
+  .statsCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .number {
+    font-size: 1.75rem !important;
+  }
+
+  .chartCard {
+    padding: 1rem;
+  }
+
+  .lineChart {
+    height: 200px;
+  }
+
+  .doughnutChart {
+    height: 180px;
+  }
+}
+
+/* Loading Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboardContainer > * {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.dashboardSummary {
+  animation-delay: 0.1s;
+}
+
+.chartsContainer {
+  animation-delay: 0.2s;
+}
+
+/* Hover Effects */
+.totalAmountCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px rgba(79, 70, 229, 0.4);
+}
+
+.chartCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Scrollbar Styling */
+.dashboardContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboardContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.dashboardContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dashboardContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

@@ -1,0 +1,328 @@
+
+.productListContainer {
+  width: 100%;
+  box-sizing: border-box;
+  background: #f8f9fa;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+#productListHeading {
+  font: 700 2.5rem "Segoe UI", sans-serif;
+  margin: 0 0 1rem 0;
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
+/* Stats Bar */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.25rem;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* DataGrid Styling */
+.productListTable {
+  background-color: white !important;
+  border: none !important;
+  font-family: 'Segoe UI', sans-serif !important;
+}
+
+.productListTable .MuiDataGrid-root {
+  border: none !important;
+}
+
+.productListTable .MuiDataGrid-columnHeaders {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-bottom: none !important;
+  min-height: 56px !important;
+}
+
+.productListTable .MuiDataGrid-columnHeader {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.productListTable .MuiDataGrid-columnHeaderTitle {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: ellipsis !important;
+}
+
+.productListTable .MuiDataGrid-columnHeaderTitleContainer {
+  padding: 0 16px !important;
+}
+
+.productListTable .MuiDataGrid-columnSeparator {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.productListTable .MuiDataGrid-row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease !important;
+}
+
+.productListTable .MuiDataGrid-row:hover {
+  background-color: rgba(102, 126, 234, 0.05) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.productListTable .MuiDataGrid-cell {
+  font: 400 0.95rem "Segoe UI", sans-serif !important;
+  color: #2c3e50 !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+  padding: 1rem 0.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.productListTable .MuiDataGrid-cellContent {
+  width: 100%;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Action Buttons */
+.action-link,
+.action-button {
+  margin: 0 0.25rem !important;
+  padding: 0.5rem !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  min-width: auto !important;
+  border: none !important;
+  background: none !important;
+}
+
+.edit-link {
+  color: #3498db !important;
+  text-decoration: none !important;
+}
+
+.edit-link:hover {
+  background-color: rgba(52, 152, 219, 0.1) !important;
+  color: #2980b9 !important;
+  transform: scale(1.1);
+}
+
+.delete-button {
+  color: #e74c3c !important;
+}
+
+.delete-button:hover {
+  background-color: rgba(231, 76, 60, 0.1) !important;
+  color: #c0392b !important;
+  transform: scale(1.1);
+}
+
+.action-link svg,
+.action-button svg {
+  font-size: 1.2rem !important;
+}
+
+/* Pagination */
+.productListTable .MuiDataGrid-footerContainer {
+  background-color: #f8f9fa !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+  padding: 1rem !important;
+}
+
+.productListTable .MuiTablePagination-root {
+  color: #2c3e50 !important;
+}
+
+.productListTable .MuiTablePagination-select {
+  background-color: white !important;
+  border-radius: 5px !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Loading and Empty States */
+.productListTable .MuiDataGrid-overlay {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #2c3e50 !important;
+  font-size: 1.1rem !important;
+}
+
+/* Scrollbar Styling */
+.productListTable .MuiDataGrid-virtualScroller::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.productListTable .MuiDataGrid-virtualScroller::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.productListTable .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+}
+
+.productListTable .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .productListContainer {
+    padding: 1rem;
+  }
+  
+  .page-header {
+    padding: 1rem;
+  }
+  
+  #productListHeading {
+    font-size: 2rem;
+  }
+  
+  .stats-bar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .stat-item {
+    padding: 0.75rem;
+  }
+  
+  .productListTable .MuiDataGrid-cell {
+    font-size: 0.85rem !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+  
+  .action-link,
+  .action-button {
+    padding: 0.25rem !important;
+    margin: 0 0.125rem !important;
+  }
+  
+  .action-link svg,
+  .action-button svg {
+    font-size: 1rem !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .productListContainer {
+    padding: 0.5rem;
+  }
+  
+  #productListHeading {
+    font-size: 1.75rem;
+  }
+  
+  .productListTable .MuiDataGrid-cell {
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.25rem !important;
+  }
+  
+  .table-wrapper {
+    border-radius: 10px;
+  }
+}
+
+/* Animation for smooth transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.productListContainer {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.table-wrapper {
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+/* Enhanced focus states for accessibility */
+.action-link:focus,
+.action-button:focus {
+  outline: 2px solid #667eea !important;
+  outline-offset: 2px !important;
+}
+
+/* Print styles */
+@media print {
+  .productListContainer {
+    background: white !important;
+    box-shadow: none !important;
+  }
+  
+  .page-header {
+    background: #667eea !important;
+    color: white !important;
+  }
+  
+  .action-link,
+  .action-button {
+    display: none !important;
+  }
+}

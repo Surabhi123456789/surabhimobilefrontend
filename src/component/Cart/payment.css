@@ -1,0 +1,389 @@
+/* .paymentContainer {
+  display: grid;
+  place-items: center;
+  background-color: rgb(255, 255, 255);
+  height: 65vh;
+  margin: 2vmax;
+}
+
+.paymentForm {
+  width: 22%;
+  height: 100%;
+}
+
+.paymentForm > p {
+  font: 400 2vmax "Roboto";
+  color: rgba(0, 0, 0, 0.753);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+  padding: 1vmax 0;
+  text-align: center;
+  width: 50%;
+  margin: auto;
+}
+
+.paymentForm > div {
+  display: flex;
+  align-items: center;
+  margin: 2vmax 0;
+}
+
+.paymentInput {
+  padding: 1vmax 4vmax;
+  padding-right: 1vmax;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.267);
+  border-radius: 4px;
+  outline: none;
+}
+
+.paymentForm > div > svg {
+  position: absolute;
+  transform: translateX(1vmax);
+  font-size: 1.6vmax;
+  color: rgba(0, 0, 0, 0.623);
+}
+
+.paymentFormBtn {
+  border: none;
+  background-color: tomato;
+  color: white;
+  font: 300 0.9vmax "Roboto";
+  width: 100%;
+  padding: 0.8vmax;
+  cursor: pointer;
+  transition: all 0.5s;
+  outline: none;
+}
+
+.paymentFormBtn:hover {
+  background-color: rgb(179, 66, 46);
+}
+
+@media screen and (max-width: 600px) {
+  .paymentForm {
+    width: 90%;
+  }
+
+  .paymentForm > p {
+    font: 400 8vw "Roboto";
+    padding: 4vw 0;
+    width: 60%;
+  }
+
+  .paymentForm > div {
+    margin: 10vw 0;
+  }
+
+  .paymentInput {
+    padding: 4vw 10vw;
+  }
+
+  .paymentForm > div > svg {
+    font-size: 6vw;
+  }
+
+  .paymentFormBtn {
+    font: 300 4vw "Roboto";
+    padding: 4vw;
+  }
+} */
+
+.paymentContainer {
+  display: grid;
+  place-items: center;
+  background-color: rgb(255, 255, 255);
+  min-height: 100vh;
+  padding: 2vmax;
+  margin-bottom: 10vmax; /* Add space for footer */
+}
+
+.paymentForm {
+  width: 22%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 2vmax;
+  margin: 2vmax auto;
+}
+
+.paymentForm > p {
+  font: 400 2vmax "Roboto";
+  color: rgba(0, 0, 0, 0.753);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+  padding: 1vmax 0;
+  text-align: center;
+  width: 50%;
+  margin: auto;
+  margin-bottom: 2vmax;
+}
+
+/* Payment Methods Styling */
+.paymentMethods {
+  display: flex;
+  justify-content: center;
+  gap: 3vmax;
+  margin: 2vmax 0;
+  padding: 1vmax;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+}
+
+.paymentMethodOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5vmax;
+  cursor: pointer;
+  padding: 0.5vmax 1vmax;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.paymentMethodOption:hover {
+  background-color: rgba(255, 99, 71, 0.1);
+}
+
+.paymentMethodOption input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.2vmax;
+  height: 1.2vmax;
+  border: 2px solid rgba(0, 0, 0, 0.267);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  margin-right: 0.5vmax;
+}
+
+.paymentMethodOption input[type="radio"]:checked {
+  border-color: tomato;
+}
+
+.paymentMethodOption input[type="radio"]:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.6vmax;
+  height: 0.6vmax;
+  background-color: tomato;
+  border-radius: 50%;
+}
+
+.paymentMethodOption label {
+  font: 400 1vmax "Roboto";
+  color: rgba(0, 0, 0, 0.753);
+  cursor: pointer;
+}
+
+/* Input Fields Styling */
+.inputContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 2vmax 0;
+}
+
+.paymentInput {
+  padding: 1vmax 4vmax;
+  padding-right: 1vmax;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.267);
+  border-radius: 4px;
+  outline: none;
+  font: 300 1vmax "Roboto";
+  transition: all 0.3s ease;
+}
+
+.paymentInput:focus {
+  border-color: tomato;
+  box-shadow: 0 0 0 1px rgba(255, 99, 71, 0.2);
+}
+
+.paymentInput::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.paymentInput.error {
+  border-color: #ff0000;
+  background-color: rgba(255, 0, 0, 0.03);
+}
+
+.validationMessage {
+  color: #ff0000;
+  font-size: 0.8vmax;
+  margin-top: 0.5vmax;
+  padding-left: 4vmax;
+  font-family: "Roboto";
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.paymentForm > div > svg {
+  position: absolute;
+  transform: translateX(1vmax);
+  font-size: 1.6vmax;
+  color: rgba(0, 0, 0, 0.623);
+  top: 1vmax;
+  transition: color 0.3s ease;
+}
+
+.inputContainer:focus-within > svg {
+  color: tomato;
+}
+
+/* Submit Button Styling */
+.paymentFormBtn {
+  border: none;
+  background-color: tomato;
+  color: white;
+  font: 300 0.9vmax "Roboto";
+  width: 100%;
+  padding: 0.8vmax;
+  cursor: pointer;
+  transition: all 0.5s;
+  outline: none;
+  border-radius: 4px;
+  margin-top: 2vmax;
+}
+
+.paymentFormBtn:hover {
+  background-color: rgb(179, 66, 46);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.paymentFormBtn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.paymentFormBtn:disabled {
+  background-color: rgba(255, 99, 71, 0.5);
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+  .paymentForm {
+    width: 30%;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .paymentForm {
+    width: 40%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .paymentContainer {
+    padding: 4vmax 2vmax;
+    margin-bottom: 15vmax;
+  }
+
+  .paymentForm {
+    width: 90%;
+    padding: 4vmax;
+  }
+
+  .paymentForm > p {
+    font: 400 5vw "Roboto"; /* Reduced from 6vw */
+    padding: 3vw 0;
+    width: 70%;
+  }
+
+  .paymentMethods {
+    flex-direction: column;
+    gap: 3vw;
+    align-items: flex-start;
+    padding: 3vw;
+  }
+
+  .paymentMethodOption {
+    padding: 2vw;
+    width: 100%;
+  }
+
+  .paymentMethodOption input[type="radio"] {
+    width: 3.5vw; /* Reduced from 4vw */
+    height: 3.5vw;
+  }
+
+  .paymentMethodOption input[type="radio"]:checked::before {
+    width: 1.8vw;
+    height: 1.8vw;
+  }
+
+  .paymentMethodOption label {
+    font: 400 3.5vw "Roboto"; /* Reduced from 4vw */
+  }
+
+  .inputContainer {
+    margin: 4vw 0; /* Reduced from 6vw */
+  }
+
+  .paymentInput {
+    padding: 3vw 8vw; /* Reduced padding */
+    font-size: 3.5vw;
+  }
+
+  .validationMessage {
+    font-size: 2.8vw;
+    padding-left: 8vw;
+    margin-top: 1.5vw;
+  }
+
+  .paymentForm > div > svg {
+    font-size: 5vw; /* Reduced from 6vw */
+    top: 3vw;
+    transform: translateX(2vw);
+  }
+
+  .paymentFormBtn {
+    font: 300 3.5vw "Roboto"; /* Reduced from 4vw */
+    padding: 3vw;
+    margin-top: 4vw;
+  }
+}
+
+/* Additional breakpoint for very small devices */
+@media screen and (max-width: 400px) {
+  .paymentContainer {
+    padding: 3vmax 1vmax;
+  }
+
+  .paymentForm {
+    padding: 3vmax;
+  }
+
+  .paymentForm > p {
+    font: 400 4.5vw "Roboto";
+    width: 80%;
+  }
+
+  .paymentInput {
+    padding: 2.5vw 8vw;
+    font-size: 3.2vw;
+  }
+
+  .paymentMethodOption label {
+    font: 400 3.2vw "Roboto";
+  }
+
+  .validationMessage {
+    font-size: 2.5vw;
+  }
+}
