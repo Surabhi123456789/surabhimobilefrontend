@@ -89,17 +89,21 @@ export const loadUser = () => async (dispatch) => {
     dispatch({ type: LOAD_USER_REQUEST });
    
     const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
-      withCredentials: true, 
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     dispatch({ type: LOAD_USER_SUCCESS, payload: data.user });
-    // Load user's cart after loading user data
+    
     if (data.user && data.user._id) {
       dispatch(loadCartFromStorageAction(data.user._id));
     }
 
   } catch (error) {
-    dispatch({ type: LOAD_USER_FAIL, payload: error.response.data.message });
+    const message = error.response?.data?.message || error.message || 'An error occurred';
+    dispatch({ type: LOAD_USER_FAIL, payload: message });
   }
 };
 
