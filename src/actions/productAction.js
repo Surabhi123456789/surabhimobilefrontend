@@ -54,7 +54,8 @@ let link = `${baseURL}/api/v1/products?keyword=${keyword}&page=${currentPage}&pr
       console.log("API Call to:", link);
       console.log("Category being sent:", category);
 
-      const {data} = await axios.get(link);
+      const { data } = await axios.get(link, { withCredentials: true });
+
       
       console.log("API Response:", data);
 
@@ -80,7 +81,10 @@ export const getProductDetails = (id) => async (dispatch) => {
 
   const baseURL = process.env.REACT_APP_BACKEND_URL;
 
-const { data } = await axios.get(`${baseURL}/api/v1/product/${id}`);
+const { data } = await axios.get(`${baseURL}/api/v1/product/${id}`, {
+  withCredentials: true,
+});
+
 
    console.log('API response:', data);
 
