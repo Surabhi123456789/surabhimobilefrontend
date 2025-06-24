@@ -307,23 +307,19 @@ import { LOGIN_FAIL,
    UPDATE_USER_FAIL,
    } from "../constants/userConstants";
 import axios from "axios";
+import API from '../utils/api'; // Use the API instance for axios
 
 import { loadCartFromStorageAction, clearCart } from "./cartAction";
 
 // login - FIXED VERSION
 export const login = (email, password) => async (dispatch) => {
   try {
+    console.log('🔑 Starting login process...');
     dispatch({ type: LOGIN_REQUEST });
 
-    const { data } = await axios.post(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/login`,
-      { email, password },
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true, // CRITICAL: This saves the cookie
-      }
-    );
+    const { data } = await API.post('/api/v1/login', { email, password });
 
+    console.log('✅ Login successful:', data);
     dispatch({ type: LOGIN_SUCCESS, payload: data.user });
     
     // Load user's cart after successful login
@@ -331,7 +327,11 @@ export const login = (email, password) => async (dispatch) => {
       dispatch(loadCartFromStorageAction(data.user._id));
     }
   } catch (error) {
-    dispatch({ type: LOGIN_FAIL, payload: error.response.data.message });
+    console.error('❌ Login failed:', error.response?.data);
+    dispatch({ 
+      type: LOGIN_FAIL, 
+      payload: error.response?.data?.message || 'Login failed'
+    });
   }
 };
 
@@ -361,15 +361,12 @@ export const register = (userData) => async (dispatch) => {
 // load user - Already has withCredentials ✅
 export const loadUser = () => async (dispatch) => {
   try {
+    console.log('👤 Loading user...');
     dispatch({ type: LOAD_USER_REQUEST });
    
-    const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const { data } = await API.get('/api/v1/me');
 
+    console.log('✅ User loaded:', data);
     dispatch({ type: LOAD_USER_SUCCESS, payload: data.user });
     
     if (data.user && data.user._id) {
@@ -377,6 +374,7 @@ export const loadUser = () => async (dispatch) => {
     }
 
   } catch (error) {
+    console.error('❌ Load user failed:', error.response?.data);
     const message = error.response?.data?.message || error.message || 'An error occurred';
     dispatch({ type: LOAD_USER_FAIL, payload: message });
   }
