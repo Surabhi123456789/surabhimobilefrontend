@@ -87,8 +87,8 @@ export const register = (userData) => async (dispatch) => {
 export const loadUser = () => async (dispatch) => {
   try {
     dispatch({ type: LOAD_USER_REQUEST });
-
-    const { data } = await axios.get(`${baseURL}/api/v1/me`, {
+   
+    const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
       withCredentials: true, 
     });
 
