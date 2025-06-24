@@ -307,7 +307,7 @@ import { LOGIN_FAIL,
    UPDATE_USER_FAIL,
    } from "../constants/userConstants";
 import axios from "axios";
-import API from '../utils/api'; // Use the API instance for axios
+import API from '../../utils/api'; // Use the API instance for axios
 
 import { loadCartFromStorageAction, clearCart } from "./cartAction";
 
