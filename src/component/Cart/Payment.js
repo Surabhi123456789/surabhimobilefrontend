@@ -1,3 +1,4 @@
+// ===== FIXED Payment Component =====
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import CheckoutSteps from "../Cart/CheckoutSteps";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +18,7 @@ const Payment = ({rzrApiKey}) => {
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCVC, setCardCVC] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({
     cardNumber: false,
@@ -32,6 +34,9 @@ const Payment = ({rzrApiKey}) => {
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
   const { error } = useSelector((state) => state.newOrder);
+
+  // CRITICAL FIX: Get backend URL from environment variables
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
 
   const validateCard = () => {
     const newErrors = {};
@@ -85,25 +90,33 @@ const Payment = ({rzrApiKey}) => {
 
   const handleRazorpayPayment = async () => {
     try {
+      setIsProcessing(true);
 
-        if (!user || !user.email) {
+      if (!user || !user.email) {
         toast.error("Please login to continue with payment");
         navigate("/login");
         return;
       }
 
+      console.log('🚀 Starting Razorpay payment process...');
+      console.log('💰 Amount:', orderInfo.totalPrice);
+      console.log('🔗 API URL:', `${API_BASE_URL}/api/v1/payment/process`);
+
+      // FIXED: Use full backend URL instead of relative path
       const config = {
         headers: {
           "Content-Type": "application/json",
         },
-          withCredentials: true,
+        withCredentials: true,
       };
 
       const { data } = await axios.post(
-        "/api/v1/payment/process",
+        `${API_BASE_URL}/api/v1/payment/process`, // FIXED: Full URL
         { amount: Math.round(orderInfo.totalPrice * 100) },
         config
       );
+
+      console.log('✅ Payment order created:', data);
 
       const options = {
         key: rzrApiKey,
@@ -114,30 +127,52 @@ const Payment = ({rzrApiKey}) => {
         order_id: data.order.id,
         handler: async (response) => {
           try {
+            console.log('💳 Payment successful, verifying...', response);
+            
             const verifyData = {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
             };
 
+            // FIXED: Use full backend URL
             const { data: verifyResponse } = await axios.post(
-              "/api/v1/razorpay/verify",
+              `${API_BASE_URL}/api/v1/razorpay/verify`, // FIXED: Full URL
               verifyData,
               config
             );
 
+            console.log('✅ Payment verified:', verifyResponse);
+
             if (verifyResponse.success) {
-              dispatch(createOrder({
+              // Create order after successful payment
+              const orderData = {
                 ...order,
                 paymentInfo: {
                   id: response.razorpay_payment_id,
                   status: "succeeded",
                 }
-              }));
+              };
+
+              dispatch(createOrder(orderData));
+              
+              // Clear cart data
+              sessionStorage.removeItem("orderInfo");
+              
+              toast.success("Payment successful!");
               navigate("/success");
+            } else {
+              throw new Error("Payment verification failed");
             }
           } catch (error) {
+            console.error('❌ Payment verification error:', error);
             toast.error(error.response?.data?.message || "Payment verification failed");
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            console.log('🚫 Payment modal dismissed');
+            setIsProcessing(false);
           }
         },
         prefill: {
@@ -151,27 +186,44 @@ const Payment = ({rzrApiKey}) => {
       };
 
       const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.on('payment.failed', function (response) {
+        console.error('❌ Payment failed:', response.error);
+        toast.error(`Payment failed: ${response.error.description}`);
+        setIsProcessing(false);
+      });
+
       razorpayInstance.open();
+      
     } catch (error) {
-      console.error("Payment error:", error);
+      console.error("💥 Payment error:", error);
+      setIsProcessing(false);
       
       // Handle specific error cases
       if (error.response?.status === 401) {
         toast.error("Session expired. Please login again.");
         navigate("/login");
+      } else if (error.response?.status === 404) {
+        toast.error("Payment service not available. Please try again later.");
       } else {
-        toast.error(error.response?.data?.message || "Payment failed");
+        toast.error(error.response?.data?.message || "Payment failed. Please try again.");
       }
     }
   };
+
   const submitHandler = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (isProcessing) {
+      return; // Prevent multiple submissions
+    }
     
     if (paymentMethod === "card") {
       if (!validateCard()) {
         return;
       }
+      // Handle card payment logic here
+      toast.info("Card payment integration coming soon!");
     }
   
     if (paymentMethod === "razorpay") {
@@ -187,11 +239,14 @@ const Payment = ({rzrApiKey}) => {
     shippingPrice: orderInfo.shippingCharges,
     totalPrice: orderInfo.totalPrice,
   };
-   
-  useEffect(() => {
-    axios.defaults.withCredentials = true;
-  }, []);
 
+  useEffect(() => {
+    // Configure axios defaults
+    axios.defaults.withCredentials = true;
+    axios.defaults.baseURL = API_BASE_URL;
+    
+    console.log('🔧 Axios configured with base URL:', API_BASE_URL);
+  }, [API_BASE_URL]);
 
   useEffect(() => {
     if (error) {
@@ -199,6 +254,14 @@ const Payment = ({rzrApiKey}) => {
       dispatch(clearErrors());
     }
   }, [dispatch, error]);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login to access payment page");
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   return (
     <Fragment>
@@ -217,6 +280,7 @@ const Payment = ({rzrApiKey}) => {
                 value="card"
                 checked={paymentMethod === "card"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
+                disabled={isProcessing}
               />
               <label htmlFor="card">Card Payment</label>
             </div>
@@ -228,6 +292,7 @@ const Payment = ({rzrApiKey}) => {
                 value="razorpay"
                 checked={paymentMethod === "razorpay"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
+                disabled={isProcessing}
               />
               <label htmlFor="razorpay">Razorpay</label>
             </div>
@@ -247,6 +312,7 @@ const Payment = ({rzrApiKey}) => {
                   onFocus={handleInputFocus}
                   onClick={handleInputFocus}
                   onBlur={() => handleBlur('cardNumber')}
+                  disabled={isProcessing}
                 />
                 {touched.cardNumber && errors.cardNumber && 
                   <p className="validationMessage">{errors.cardNumber}</p>
@@ -263,6 +329,7 @@ const Payment = ({rzrApiKey}) => {
                   onFocus={handleInputFocus}
                   onClick={handleInputFocus}
                   onBlur={() => handleBlur('cardExpiry')}
+                  disabled={isProcessing}
                 />
                 {touched.cardExpiry && errors.cardExpiry && 
                   <p className="validationMessage">{errors.cardExpiry}</p>
@@ -279,6 +346,7 @@ const Payment = ({rzrApiKey}) => {
                   onFocus={handleInputFocus}
                   onClick={handleInputFocus}
                   onBlur={() => handleBlur('cardCVC')}
+                  disabled={isProcessing}
                 />
                 {touched.cardCVC && errors.cardCVC && 
                   <p className="validationMessage">{errors.cardCVC}</p>
@@ -289,9 +357,10 @@ const Payment = ({rzrApiKey}) => {
 
           <input
             type="submit"
-            value={`Pay - ₹${orderInfo && orderInfo.totalPrice}`}
+            value={isProcessing ? "Processing..." : `Pay - ₹${orderInfo && orderInfo.totalPrice}`}
             ref={payBtn}
             className="paymentFormBtn"
+            disabled={isProcessing}
           />
         </form>
       </div>
