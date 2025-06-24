@@ -56,26 +56,85 @@ export const createOrder = (order) => async(dispatch) => {
     }
 }
 
-// my orders
-export const myOrders = () => async(dispatch) => {
-    try {
-        dispatch({ type: MY_ORDERS_REQUEST });
-
-        const baseURL = process.env.REACT_APP_BACKEND_URL;
-
-        const { data } = await axios.get(`${baseURL}/api/v1/orders/me`, {
-            withCredentials: true, // Added authentication
-        });
-
-        dispatch({ type: MY_ORDERS_SUCCESS, payload: data.orders });
-
-    } catch (error) {
-        console.error("My orders error:", error);
-        dispatch({
-            type: MY_ORDERS_FAIL,
-            payload: error.response?.data?.message || "Failed to fetch orders",
-        });
+export const myOrders = () => async(dispatch, getState) => {
+  try {
+    dispatch({ type: MY_ORDERS_REQUEST });
+    
+    // Check if user is logged in before making the request
+    const { user } = getState().user;
+    console.log("Current user state:", user);
+    
+    if (!user) {
+      dispatch({
+        type: MY_ORDERS_FAIL,
+        payload: "Please login to view your orders",
+      });
+      return;
     }
+    
+    const baseURL = process.env.REACT_APP_BACKEND_URL;
+    console.log("Making request to:", `${baseURL}/api/v1/orders/me`);
+    
+    // Include withCredentials to send authentication cookies
+    const { data } = await axios.get(`${baseURL}/api/v1/orders/me`, {
+      withCredentials: true
+    });
+    
+    console.log("Orders fetched successfully:", data);
+    dispatch({ type: MY_ORDERS_SUCCESS, payload: data.orders });
+    
+  } catch(error) {
+    console.error("Error fetching orders:", error);
+    console.error("Error response:", error.response?.data);
+    
+    dispatch({
+      type: MY_ORDERS_FAIL,
+      payload: error.response?.data?.message || "Failed to fetch orders",
+    });
+  }
+}
+
+// Alternative version that checks authentication first
+export const myOrdersWithAuthCheck = () => async(dispatch, getState) => {
+  try {
+    // Check authentication state first
+    const { isAuthenticated, user } = getState().user;
+    
+    if (!isAuthenticated || !user) {
+      dispatch({
+        type: MY_ORDERS_FAIL,
+        payload: "Please login to view your orders",
+      });
+      return;
+    }
+    
+    dispatch({ type: MY_ORDERS_REQUEST });
+    
+    const baseURL = process.env.REACT_APP_BACKEND_URL;
+    
+    const { data } = await axios.get(`${baseURL}/api/v1/orders/me`, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    dispatch({ type: MY_ORDERS_SUCCESS, payload: data.orders });
+    
+  } catch(error) {
+    console.error("Orders fetch error:", error);
+    
+    // If it's an auth error, might need to redirect to login
+    if (error.response?.status === 401) {
+      // Optionally dispatch a logout action here
+      // dispatch({ type: LOGOUT_USER });
+    }
+    
+    dispatch({
+      type: MY_ORDERS_FAIL,
+      payload: error.response?.data?.message || "Failed to fetch orders",
+    });
+  }
 }
 
 // order details
