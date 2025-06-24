@@ -108,7 +108,9 @@ export const getAdminProduct = () => async (dispatch) => {
 
     const baseURL = process.env.REACT_APP_BACKEND_URL;
 
-const { data } = await axios.get(`${baseURL}/api/v1/admin/products`);
+const { data } = await axios.get(`${baseURL}/api/v1/admin/products`,{
+      withCredentials: true, // Add this line
+    });
 
 
     dispatch({
@@ -135,7 +137,9 @@ export const createProduct = (productData) => async (dispatch) => {
     const baseURL = process.env.REACT_APP_BACKEND_URL;
 
 const { data } = await axios.post(
-  `${baseURL}/api/v1/admin/product/new`,
+  `${baseURL}/api/v1/admin/product/new`,{
+      withCredentials: true, // Add this line
+    },
   productData,
   config
 );
@@ -166,7 +170,9 @@ export const updateProduct = (id, productData) => async (dispatch) => {
     const baseURL = process.env.REACT_APP_BACKEND_URL;
 
 const { data } = await axios.put(
-  `${baseURL}/api/v1/admin/product/${id}`,
+  `${baseURL}/api/v1/admin/product/${id}`,{
+      withCredentials: true, // Add this line
+    },
   productData,
   config
 );
@@ -200,7 +206,9 @@ const { data } = await axios.delete(
   {
     data: { public_id }, // send public_id in request body
     ...config,
-  }
+  },{
+      withCredentials: true, // Add this line
+    }
 );
 
 
