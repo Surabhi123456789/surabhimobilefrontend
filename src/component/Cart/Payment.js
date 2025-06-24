@@ -1,4 +1,3 @@
-// ===== FIXED Payment Component =====
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import CheckoutSteps from "../Cart/CheckoutSteps";
 import { useSelector, useDispatch } from "react-redux";
@@ -13,12 +12,13 @@ import EventIcon from "@material-ui/icons/Event";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import { createOrder, clearErrors } from "../../actions/orderAction";
 
-const Payment = ({rzrApiKey}) => {
-  const [paymentMethod, setPaymentMethod] = useState("card");
+const Payment = () => {
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCVC, setCardCVC] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [razorpayKey, setRazorpayKey] = useState("");
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({
     cardNumber: false,
@@ -35,8 +35,41 @@ const Payment = ({rzrApiKey}) => {
   const { user } = useSelector((state) => state.user);
   const { error } = useSelector((state) => state.newOrder);
 
-  // CRITICAL FIX: Get backend URL from environment variables
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+
+  // Fetch Razorpay API key when component mounts
+  useEffect(() => {
+    const getRazorpayKey = async () => {
+      try {
+        console.log('🔑 Fetching Razorpay API key...');
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        };
+
+        const { data } = await axios.get(
+          `${API_BASE_URL}/api/v1/razorpayapikey`,
+          config
+        );
+
+        if (data.success && data.rzrApiKey) {
+          setRazorpayKey(data.rzrApiKey);
+          console.log('✅ Razorpay key fetched successfully:', data.rzrApiKey.substring(0, 10) + '...');
+        } else {
+          throw new Error('API key not found in response');
+        }
+      } catch (error) {
+        console.error('❌ Error fetching Razorpay key:', error);
+        toast.error('Failed to initialize payment service');
+      }
+    };
+
+    if (user) {
+      getRazorpayKey();
+    }
+  }, [user, API_BASE_URL]);
 
   const validateCard = () => {
     const newErrors = {};
@@ -98,11 +131,24 @@ const Payment = ({rzrApiKey}) => {
         return;
       }
 
+      // Check if Razorpay key is available
+      if (!razorpayKey) {
+        toast.error("Payment service not initialized. Please refresh the page.");
+        setIsProcessing(false);
+        return;
+      }
+
+      // Check if Razorpay script is loaded
+      if (!window.Razorpay) {
+        toast.error("Payment service not loaded. Please refresh the page.");
+        setIsProcessing(false);
+        return;
+      }
+
       console.log('🚀 Starting Razorpay payment process...');
       console.log('💰 Amount:', orderInfo.totalPrice);
-      console.log('🔗 API URL:', `${API_BASE_URL}/api/v1/payment/process`);
+      console.log('🔑 Using Razorpay key:', razorpayKey.substring(0, 10) + '...');
 
-      // FIXED: Use full backend URL instead of relative path
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -111,15 +157,19 @@ const Payment = ({rzrApiKey}) => {
       };
 
       const { data } = await axios.post(
-        `${API_BASE_URL}/api/v1/payment/process`, // FIXED: Full URL
+        `${API_BASE_URL}/api/v1/payment/process`,
         { amount: Math.round(orderInfo.totalPrice * 100) },
         config
       );
 
       console.log('✅ Payment order created:', data);
 
+      if (!data.success || !data.order) {
+        throw new Error(data.message || 'Failed to create payment order');
+      }
+
       const options = {
-        key: rzrApiKey,
+        key: razorpayKey, // Use the fetched key
         amount: data.order.amount,
         currency: data.order.currency,
         name: "SURABHI MOBILE",
@@ -135,9 +185,8 @@ const Payment = ({rzrApiKey}) => {
               razorpay_signature: response.razorpay_signature,
             };
 
-            // FIXED: Use full backend URL
             const { data: verifyResponse } = await axios.post(
-              `${API_BASE_URL}/api/v1/razorpay/verify`, // FIXED: Full URL
+              `${API_BASE_URL}/api/v1/razorpay/verify`,
               verifyData,
               config
             );
@@ -145,7 +194,6 @@ const Payment = ({rzrApiKey}) => {
             console.log('✅ Payment verified:', verifyResponse);
 
             if (verifyResponse.success) {
-              // Create order after successful payment
               const orderData = {
                 ...order,
                 paymentInfo: {
@@ -155,8 +203,6 @@ const Payment = ({rzrApiKey}) => {
               };
 
               dispatch(createOrder(orderData));
-              
-              // Clear cart data
               sessionStorage.removeItem("orderInfo");
               
               toast.success("Payment successful!");
@@ -167,6 +213,7 @@ const Payment = ({rzrApiKey}) => {
           } catch (error) {
             console.error('❌ Payment verification error:', error);
             toast.error(error.response?.data?.message || "Payment verification failed");
+            setIsProcessing(false);
           }
         },
         modal: {
@@ -185,7 +232,15 @@ const Payment = ({rzrApiKey}) => {
         },
       };
 
+      console.log('🎯 Creating Razorpay instance with options:', {
+        key: razorpayKey.substring(0, 10) + '...',
+        amount: options.amount,
+        currency: options.currency,
+        order_id: options.order_id
+      });
+
       const razorpayInstance = new window.Razorpay(options);
+      
       razorpayInstance.on('payment.failed', function (response) {
         console.error('❌ Payment failed:', response.error);
         toast.error(`Payment failed: ${response.error.description}`);
@@ -198,7 +253,6 @@ const Payment = ({rzrApiKey}) => {
       console.error("💥 Payment error:", error);
       setIsProcessing(false);
       
-      // Handle specific error cases
       if (error.response?.status === 401) {
         toast.error("Session expired. Please login again.");
         navigate("/login");
@@ -215,14 +269,13 @@ const Payment = ({rzrApiKey}) => {
     e.stopPropagation();
     
     if (isProcessing) {
-      return; // Prevent multiple submissions
+      return;
     }
     
     if (paymentMethod === "card") {
       if (!validateCard()) {
         return;
       }
-      // Handle card payment logic here
       toast.info("Card payment integration coming soon!");
     }
   
@@ -241,21 +294,12 @@ const Payment = ({rzrApiKey}) => {
   };
 
   useEffect(() => {
-    // Configure axios defaults
-    axios.defaults.withCredentials = true;
-    axios.defaults.baseURL = API_BASE_URL;
-    
-    console.log('🔧 Axios configured with base URL:', API_BASE_URL);
-  }, [API_BASE_URL]);
-
-  useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
     }
   }, [dispatch, error]);
 
-  // Check if user is authenticated
   useEffect(() => {
     if (!user) {
       toast.error("Please login to access payment page");
@@ -292,9 +336,11 @@ const Payment = ({rzrApiKey}) => {
                 value="razorpay"
                 checked={paymentMethod === "razorpay"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                disabled={isProcessing}
+                disabled={isProcessing || !razorpayKey}
               />
-              <label htmlFor="razorpay">Razorpay</label>
+              <label htmlFor="razorpay">
+                Razorpay {!razorpayKey && "(Loading...)"}
+              </label>
             </div>
           </div>
 
@@ -357,10 +403,16 @@ const Payment = ({rzrApiKey}) => {
 
           <input
             type="submit"
-            value={isProcessing ? "Processing..." : `Pay - ₹${orderInfo && orderInfo.totalPrice}`}
+            value={
+              isProcessing 
+                ? "Processing..." 
+                : !razorpayKey && paymentMethod === "razorpay"
+                ? "Loading payment service..."
+                : `Pay - ₹${orderInfo && orderInfo.totalPrice}`
+            }
             ref={payBtn}
             className="paymentFormBtn"
-            disabled={isProcessing}
+            disabled={isProcessing || (!razorpayKey && paymentMethod === "razorpay")}
           />
         </form>
       </div>
